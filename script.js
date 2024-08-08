@@ -24,6 +24,8 @@ document.getElementById('vsComputer').addEventListener('click', () => {
 });
 
 document.getElementById('reset').addEventListener('click', resetGame);
+document.getElementById('reset').addEventListener('click', resetScore);
+
 document.getElementById('mainMenu').addEventListener('click', showMenu);
 document.getElementById('highScore').addEventListener('click', showHighScores);
 document.getElementById('backToMenu').addEventListener('click', showMenu);
@@ -248,11 +250,20 @@ function updateScores() {
 }
 
 function saveScore() {
-    const scoreData = { name: player1Name, score: player1Score };
+    const scoreData = {
+        name: player1Name, player2Name,
+        player1Score: player1Score,
+        player2Score: player2Score,
+        
+    };
+
+    // Check if the game mode is vs Player or vs Computer
     if (!isVsComputer) {
+        // Add scores to vsPlayerScores
         vsPlayerScores.push(scoreData);
         localStorage.setItem('vsPlayerScores', JSON.stringify(vsPlayerScores));
     } else {
+        // Add scores to the appropriate vsComputer scores list based on difficulty
         if (difficulty === 'easy') {
             vsComputerScoresEasy.push(scoreData);
             localStorage.setItem('vsComputerScoresEasy', JSON.stringify(vsComputerScoresEasy));
@@ -270,7 +281,7 @@ function updateHighScoresDisplay() {
     function createListItems(scores) {
         return scores
             .sort((a, b) => b.score - a.score)
-            .map(score => `<li>${score.name}: ${score.score}</li>`)
+            .map(score => `<li>${player1Name} vs ${player2Name} (P1: ${score.player1Score}, P2: ${score.player2Score})</li>`)
             .join('');
     }
 
@@ -286,3 +297,10 @@ function resetGame() {
     currentPlayer = 'X';
 }
 
+function resetScore() {
+    player1Score = 0;
+    player2Score = 0;
+    updateScores();
+
+
+}
