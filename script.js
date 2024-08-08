@@ -4,13 +4,13 @@ let currentPlayer = 'X';
 let board = Array(9).fill(null);
 let player1Score = 0;
 let player2Score = 0;
-let playerName = '';
 let player1Name = '';
 let player2Name = '';
 const vsPlayerScores = JSON.parse(localStorage.getItem('vsPlayerScores')) || [];
 const vsComputerScoresEasy = JSON.parse(localStorage.getItem('vsComputerScoresEasy')) || [];
 const vsComputerScoresMedium = JSON.parse(localStorage.getItem('vsComputerScoresMedium')) || [];
 const vsComputerScoresHard = JSON.parse(localStorage.getItem('vsComputerScoresHard')) || [];
+let turnInProgress = true; // Set to true at the beginning of the game
 
 // Event listeners for main menu buttons
 document.getElementById('vsPlayer').addEventListener('click', () => {
@@ -89,39 +89,47 @@ document.querySelectorAll('.cell').forEach(cell => {
 });
 
 function handleMove(event) {
+    if (!turnInProgress) return; // Ignore moves if it's not the player's turn
+
     const index = parseInt(event.target.getAttribute('data-index'));
 
     if (board[index] || checkWin()) return;
 
     board[index] = currentPlayer;
     event.target.textContent = currentPlayer;
+    setTurnInProgress(false); // End turn immediately after move
 
     if (checkWin()) {
-        handleWin();
+        setTimeout(handleWin, 500); // Delay before handling win
     } else if (board.every(cell => cell !== null)) {
-        handleDraw();
+        setTimeout(handleDraw, 500); // Delay before handling draw
     } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        if (isVsComputer && currentPlayer === 'O') makeComputerMove();
+        setTimeout(() => {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            if (isVsComputer && currentPlayer === 'O') {
+                makeComputerMove();
+            } else {
+                setTurnInProgress(true); // Enable player to make a move
+            }
+        }, 500); // Delay before switching turns
     }
 }
 
+function setTurnInProgress(value) {
+    turnInProgress = value;
+}
+
 function makeComputerMove() {
-    const boardElement = document.getElementById('board');
-    boardElement.classList.add('thinking'); // Add a class to show thinking state
+    setTurnInProgress(false); // Ensure turnInProgress is false while computer makes its move
 
     setTimeout(() => {
         let move;
         const emptyCells = board.map((val, index) => val === null ? index : null).filter(val => val !== null);
 
         if (difficulty === 'hard') {
-            move = minimax(board, 'O', -Infinity, Infinity).index;
+            move = findBestMove();
         } else if (difficulty === 'medium') {
-            move = minimax(board, 'O', -Infinity, Infinity).index;
-            // Introduce a random chance for a non-optimal move
-            if (Math.random() > 0.5 && emptyCells.length > 1) {
-                move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            }
+            move = minimax(board, 'O').index;
         } else {
             move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
         }
@@ -131,15 +139,14 @@ function makeComputerMove() {
         cell.textContent = 'O';
 
         if (checkWin()) {
-            handleWin();
+            setTimeout(handleWin, 500); // Delay before handling win
         } else if (board.every(cell => cell !== null)) {
-            handleDraw();
+            setTimeout(handleDraw, 500); // Delay before handling draw
         } else {
             currentPlayer = 'X';
+            setTurnInProgress(true); // Enable player to make a move after computer's move
         }
-
-        boardElement.classList.remove('thinking'); // Remove the class after move
-    }, 1000); // Simulate thinking time
+    }, 500); // Delay before computer makes a move
 }
 
 function findBestMove() {
@@ -159,7 +166,7 @@ function findBestMove() {
     return bestMove;
 }
 
-function minimax(newBoard, player, alpha, beta) {
+function minimax(newBoard, player, alpha = -Infinity, beta = Infinity) {
     const availSpots = newBoard.map((val, index) => val === null ? index : null).filter(val => val !== null);
 
     if (checkWin('X')) {
@@ -253,8 +260,7 @@ function saveScore() {
     const scoreData = {
         name: player1Name, player2Name,
         player1Score: player1Score,
-        player2Score: player2Score,
-        
+        player2Score: player2Score
     };
 
     // Check if the game mode is vs Player or vs Computer
@@ -295,12 +301,11 @@ function resetGame() {
     board.fill(null);
     document.querySelectorAll('.cell').forEach(cell => cell.textContent = '');
     currentPlayer = 'X';
+    setTurnInProgress(true); // Ensure player's turn is enabled at the start
 }
 
 function resetScore() {
     player1Score = 0;
     player2Score = 0;
     updateScores();
-
-
 }
