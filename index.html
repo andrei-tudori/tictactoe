@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <title>Retro Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="menu">
+        <h1>Retro Tic Tac Toe</h1> 
+        <h2>Main Menu</h2>
+        <p>Created by Andrei Tudori&trade;</p>
+        <div id="difficulty">
+            <label for="difficultySelect">Select Difficulty:</label>
+            <select id="difficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <button id="vsPlayer">Play vs Player</button>
+        <button id="vsComputer">Play vs Computer</button>
+        <button id="highScore">High Score</button>
+    </div>
+    <div id="nameInput" class="hidden">
+        <label for="player1Name">Enter Player 1 name:</label>
+        <input type="text" id="player1Name" maxlength="3">
+        <label for="player2Name" id="player2NameLabel">Enter Player 2 name:</label>
+        <input type="text" id="player2Name" maxlength="3">
+        <button id="startGame">Start Game</button>
+    </div>
+    <div id="game" class="hidden">
+        <h1>Tic Tac Toe</h1>
+        <div id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <div id="scoreboard">
+            <p>Player 1 (<span id="player1DisplayName"></span>): <span id="player1Score">0</span></p>
+            <p id="player2ScoreLabel">Player 2 (<span id="player2DisplayName"></span>): <span id="player2Score">0</span></p>
+        </div>
+        <button id="reset">Reset Game</button>
+        <button id="mainMenu">Main Menu</button>
+    </div>
+    <div id="highScoreBoard" class="hidden">
+        <h2>High Scores</h2>
+        <h3>VS Player</h3>
+        <ul id="vsPlayerScoreList"></ul>
+        <h3>VS Computer (Easy)</h3>
+        <ul id="vsComputerScoreListEasy"></ul>
+        <h3>VS Computer (Medium)</h3>
+        <ul id="vsComputerScoreListMedium"></ul>
+        <h3>VS Computer (Hard)</h3>
+        <ul id="vsComputerScoreListHard"></ul>
+        <button id="clearHighScores">Clear High Scores</button>
+        <button id="backToMenu">Back to Menu</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
